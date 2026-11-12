@@ -1,0 +1,48 @@
+name: Importer la miniature historique « Padlet jeux »
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-padlet-miniature.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-miniature:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copier la miniature WebP publique depuis l'ancien Math'as
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p miniatures
+          if [ -s miniatures/padlet-jeux.webp ]; then
+            echo 'Miniature déjà importée : aucune modification.'
+            exit 0
+          fi
+          curl --fail --location --silent --show-error --retry 2 --max-time 30 \
+            --output miniatures/padlet-jeux.webp \
+            'https://jftzuslpelgzbdrftszw.supabase.co/storage/v1/object/public/mathas-images/miniatures/optimise-v17-20-jeux-1791797149273-ie3n0w.webp'
+          mime="$(file --brief --mime-type miniatures/padlet-jeux.webp)"
+          test "$mime" = "image/webp"
+          bytes="$(wc -c < miniatures/padlet-jeux.webp)"
+          test "$bytes" -ge 1000
+          test "$bytes" -le 300000
+          echo "Miniature WebP importée : $bytes octets."
+      - name: Enregistrer l'image dans ce dépôt
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add miniatures/padlet-jeux.webp
+          if git diff --cached --quiet; then
+            echo 'Aucun nouveau fichier.'
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m 'assets: conserver la miniature Padlet jeux du Mathas historique'
+          git push
