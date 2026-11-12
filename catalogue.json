@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "description": "Liens extérieurs validés pour les HUB Math'as Connect. Publication dans le HUB via son catalogue et ses autorisations.",
+  "liens": [
+    {
+      "id": "padlet-jeux",
+      "titre": "Padlet jeux",
+      "url": "https://padlet.com/julientatas1/jeux-math-6y4b0kwcj5444l83",
+      "rubrique": "jeux",
+      "classes": [
+        "observation",
+        "phase1",
+        "phase2",
+        "phase2b",
+        "2eco"
+      ],
+      "toutes": true,
+      "laboratoire": true,
+      "miniature": "miniatures/padlet-jeux.webp",
+      "provenance_miniature": "Ancien Math'as, carte Jeux (stockage public mathas-images)",
+      "xps_scores_trophees": false
+    }
+  ]
+}
