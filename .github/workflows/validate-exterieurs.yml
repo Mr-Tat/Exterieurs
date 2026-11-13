@@ -1,0 +1,55 @@
+name: Contrôle des liens et miniatures extérieurs
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths:
+      - 'catalogue.json'
+      - 'miniatures/**'
+      - '.github/workflows/validate-exterieurs.yml'
+  pull_request:
+    paths:
+      - 'catalogue.json'
+      - 'miniatures/**'
+      - '.github/workflows/validate-exterieurs.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: URLs, classes, WebP et dimensions
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          from PIL import Image
+          root=pathlib.Path('.')
+          cfg=json.loads((root/'catalogue.json').read_text(encoding='utf-8'))
+          assert cfg['version']==1
+          ids=set()
+          spaces={'observation','phase1','phase2','phase2b','2eco'}
+          for app in cfg['liens']:
+              key=app['id']
+              assert key not in ids, f'doublon {key}'
+              ids.add(key)
+              assert app['url'].startswith('https://'),key
+              assert app['rubrique']=='jeux'
+              assert set(app['classes'])==spaces
+              assert app['toutes'] is True and app['laboratoire'] is True
+              assert app['xps_scores_trophees'] is False
+              p=root/app['miniature']
+              assert p.is_file() and p.stat().st_size < 200000,p
+              with Image.open(p) as im:
+                  assert im.format=='WEBP',p
+                  im.load()
+                  w,h=im.size
+                  assert w>=150 and h>=120 and w<=1200 and h<=1200,(p,w,h)
+              print(f'OK {key} : image {w} x {h}, {p.stat().st_size} octets')
+          assert 'padlet-jeux' in ids and 'bowling-multiplication' in ids
+          PY
