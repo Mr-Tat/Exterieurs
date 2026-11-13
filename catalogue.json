@@ -19,6 +19,24 @@
       "miniature": "miniatures/padlet-jeux.webp",
       "provenance_miniature": "Ancien Math'as, carte Jeux (stockage public mathas-images)",
       "xps_scores_trophees": false
+    },
+    {
+      "id": "bowling-multiplication",
+      "titre": "Bowling multiplication",
+      "url": "https://www.gamingbee.com/games/multiplication-bowling/v2.0/index.html?lang=nl",
+      "rubrique": "jeux",
+      "classes": [
+        "observation",
+        "phase1",
+        "phase2",
+        "phase2b",
+        "2eco"
+      ],
+      "toutes": true,
+      "laboratoire": true,
+      "miniature": "miniatures/bowling-multiplication.webp",
+      "provenance_miniature": "Capture d'écran fournie par le professeur le 13/11/2026, convertie en miniature WebP",
+      "xps_scores_trophees": false
     }
   ]
 }
